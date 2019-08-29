@@ -11,13 +11,13 @@ The recommended way to install it is via [Stack](https://www.haskellstack.org).
 
 The command
 
-```shell
+```
 $ stack build
 ```
 
 compiles the project, including the `frostc` executable.
 
-```shell
+```
 $ frostc --help
 frostc - a compiler for FROST
 
