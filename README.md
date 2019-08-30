@@ -53,17 +53,19 @@ resolved to values later (e.g. `subject`, `object` and `action` typically
 feature in access requests). `18` is an integer literal and `"drink"` a string
 literal.
 
-Assume these are the contents of a file `policy.fro`. Compile this into an
-with `frostc` using option `--ifile` or even just `-i`:
+Assume these are the contents of a file `policy.fro`. Compile this
+with `frostc` using the option `--ifile` / `-i`:
 
 ```
-$ frostc -i policy.fro 
+$ frostc -i policy.fro
 ```
 
 This produces a file `out.json` in an intermediate format, essentially a pair of
-Boolean circuits equivalent to the policy. To specify a different output file
-name use the `--ofile` / `-o` option. To pretty-print the JSON output, use the
-`--pretty` / `-p` flag. To just output to console rather than to file, use the
-`--oconsole` / `-c` flag. Policy expressions can also be passed directly to the
-command using the `--iexpr` / `-x` option.
+Boolean circuits equivalent to the policy.
+
+* To specify a different output file name use the `--ofile` / `-o` option.
+* To pretty-print the JSON output, use the `--pretty` / `-p` flag.
+* To just output to console rather than to file, use the `--oconsole` / `-c` flag.
+* Policy expressions can also be passed directly on the command line (rather
+  than by file) using the `--iexpr` / `-x` option
 
