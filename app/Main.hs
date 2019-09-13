@@ -35,11 +35,17 @@ main = compFrost =<< execParser args
       <> header "frostc - a compiler for FROST" )
 
 compFrost :: Opts -> IO ()
-compFrost (Opts (StdIn expr) True True _) =
+compFrost opts@(Opts (FileIn file) pp noOut out) = do
+  expr <- readFile file
+  -- NOTE char encoding is system / environment dependent! if this is a problem
+  -- in the future consider suggestion in
+  -- https://www.snoyman.com/blog/2016/12/beware-of-readfile
+  compFrost (opts { source = ExprIn expr })
+compFrost (Opts (ExprIn expr) True True _) =
   case parseMaybe frostParser expr of
     Nothing -> return () -- TODO error handling
     Just p  -> penc (compile0 p)
-compFrost (Opts (StdIn expr) pp False fp) =
+compFrost (Opts (ExprIn expr) pp False fp) =
   case parseMaybe frostParser expr of
     Nothing -> return ()
     Just p  -> if pp

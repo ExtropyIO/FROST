@@ -19,6 +19,9 @@ compiles the project, including the `frostc` executable.
 
 ```
 $ frostc --help
+```
+
+```
 frostc - a compiler for FROST
 
 Usage: frostc ((-i|--ifile INFILE) | (-x|--iexpr EXPRESSION)) [-p|--pretty]

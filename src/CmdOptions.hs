@@ -46,7 +46,7 @@ data Opts = Opts
 
 -- | Input option data type
 data Input = FileIn FilePath
-           | StdIn String
+           | ExprIn String
 
 -- | Parser of input option
 input :: Parser Input
@@ -55,7 +55,7 @@ input = FileIn <$> strOption
       <> short 'i'
       <> metavar "INFILE"
       <> help "Input file" )
-  <|> StdIn <$> strOption
+  <|> ExprIn <$> strOption
       (  long "iexpr"
       <> short 'x'
       <> metavar "EXPRESSION"
