@@ -16,6 +16,8 @@
    this program. If not, see <https://www.gnu.org/licenses/>.
 -}
 
+{-# OPTIONS_GHC -Wall #-}
+
 -- | Module     : Lexer
 --   Copyright  : (c) XAIN Stichting, 2019
 --   License    : GPL-3
@@ -110,5 +112,6 @@ rws = ["grant", "deny", "conflict", "undef", "if", "case", "eval", "true",
 
 -- | Parser for double-quoted string literal
 stringLit :: Parser String
-stringLit = char '"' *> manyTill L.charLiteral (char '"')
+stringLit = lexeme $ char '"' *> manyTill L.charLiteral (char '"')
 -- https://markkarpov.com/megaparsec/megaparsec.html#char-and-string-literals
+-- but NOTE that he didn't wrap with lexeme!

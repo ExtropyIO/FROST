@@ -16,6 +16,8 @@
    this program. If not, see <https://www.gnu.org/licenses/>.
 -}
 
+{-# OPTIONS_GHC -Wall #-}
+
 -- | Module     : Parser
 --   Copyright  : (c) XAIN Stichting, 2019
 --   License    : GPL-3
@@ -37,7 +39,7 @@ module Parser
 
 import Lang
 import Lexer
-import Text.Megaparsec (between, eof, try, (<|>)) -- <|> not part of Prelude!
+import Text.Megaparsec (between, eof, try, (<|>), (<?>), choice)
 import Control.Monad.Combinators.Expr -- parser-combinators package
   (makeExprParser, Operator(..))
 
@@ -56,7 +58,7 @@ pol = try rulePol
   <|> decPol
   <|> casePol
 --
--- try parsing rules before backtracking to decisions
+-- try parsing as rules before backtracking to decisions
 
 -- | Constant policy parser
 decPol :: Parser Pol
@@ -86,7 +88,7 @@ cExpr :: Parser Cond
 cExpr = makeExprParser cTerm cOps
   where
     cOps :: [[Operator Parser Cond]]
-    cOps =  [[Prefix (Not <$ symbol "¬")],  -- ¬ has highest precedence
+    cOps =  [[Prefix (Not <$ symbol "!")],  -- ! has highest precedence
              [InfixL (And <$ symbol "&&"),  -- && has same precedence...
               InfixL (Or  <$ symbol "||")]] -- as ||
 
@@ -116,22 +118,25 @@ term = subj <$  word "subject"
 -- | Relational expression parser
 rExpr :: Parser Cond
 rExpr = do
-  t1  <- term
-  rel <- relation
-  t2  <- term
+  t1  <- term     <?> "left term"
+  rel <- relation <?> "relation"
+  t2  <- term     <?> "right term"
   return (rel t1 t2)
 --
 -- NOTE do-notation used because
---   relation <$> term <*> term
+--   relation <*> term <*> term
 -- is not the right order (since relational op is infix)!
+-- this would prob work:
+-- (\t1 r t2 -> r t1 t2) <$> term <*> relation <*> term
 
 -- | Relational predicate parser
 relation :: Parser (Term -> Term -> Cond)
-relation = (=:=) <$ symbol "=="
-       <|> (>:=) <$ symbol ">="
-       <|> (<:=) <$ symbol "<="
-       <|> (<:)  <$ symbol "<"
-       <|> (>:)  <$ symbol ">"
+relation = choice -- alternative to chaining together with <|>
+  [ (=:=) <$ symbol "=="
+  , (>:=) <$ symbol ">="
+  , (<:=) <$ symbol "<="
+  , (<:)  <$ symbol "<"
+  , (>:)  <$ symbol ">" ]
 --
 -- a Parser BinPred would maybe be a bit more robust but at the moment BinPred
 -- is not exported from Lang (and arguably shouldn't need to) so we return the
